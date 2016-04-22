@@ -17,6 +17,15 @@ import java.awt.event.*;
 import static java.lang.Thread.sleep;
 
 import javax.swing.text.BadLocationException;
+import static java.lang.Thread.sleep;
+import static java.lang.Thread.sleep;
+import static java.lang.Thread.sleep;
+import static java.lang.Thread.sleep;
+import static java.lang.Thread.sleep;
+import static java.lang.Thread.sleep;
+import static java.lang.Thread.sleep;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -35,6 +44,12 @@ public class Ventana extends javax.swing.JFrame implements Runnable{
   
           auto=new Automatico();
           auto.start();
+          
+          HiloSRT=new SRT();
+          HiloRR=new RR();
+          HiloFCFS=new FCFS();
+          
+          
         
     }
 
@@ -46,96 +61,15 @@ public class Ventana extends javax.swing.JFrame implements Runnable{
 
 public void run()
 {
- boolean aumento=false; 
- int aux_status;
+ //.start();
+ 
+ HiloRR.start();
+ 
+ 
 
  
- 
- while(true)
- {
      
-    if(Ventana.entrar==true)
-      {   
-       entrar=false;
-       
-       
-       Collections.sort(indiceSRT);
-     
-       for(int i=0;i<indiceSRT.size();i++)
-       {
-         aux_status=ListaProcesosSRT.get(indiceSRT.get(i).numProceso-1).status;
-         
-        if(aux_status==1)
-        {
-         ListaProcesosSRT.get(indiceSRT.get(i).numProceso-1).start();
-         i=indiceSRT.size();
-        }   
-       }
-            entrar=true;
-         
-        //mayor=false;
-
-        try
-          {
-            sleep(5000); 
-          }
-        catch (InterruptedException e)
-          {
-           System.out.println("pr9oblemilla");
-          }	
-       }
-
-
-  
-      
- }
-     
-  /*System.out.println("Vhaaa"); 
-     
-     try
-          {
-            Creador.sleep(2000);
-            
-          }
-        catch (InterruptedException e)
-          {
-           System.out.println("pr9oblemilla");
-          }	*/
-     
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- /*
- while(contador_pos<contador)
-	   {
-	   if(contador_pos==0)
-	   	{
-	   	 ListaProcesos.get(contador_pos).start();
-	   	 contador_pos++;
-	   	 
-	   	}	   	
-	   else
-	   	{
-	   	
-	   		  while(ListaProcesos.get(contador_pos-1).alive==0)
-		   		 {
-		   		  
-		   		  ListaProcesos.get(contador_pos).start();
-		   		  contador_pos++;
-		   		  break;
-		   		 }
-	   	}
-	   }
- */
-
+    
 }
 
 //////////////////////////////////////////////////////////////////
@@ -156,32 +90,91 @@ contador++;
 
 }*/
 //////////////////////////////////////////////////////////////
-public static void crea()
+public synchronized static void crea()
 {
  Proceso aux; 
+ int tiempo;
  int prio;
+ int turno;
 
  Random tiempo_random=new Random();
- int tiempo=1 + tiempo_random.nextInt(15);
+ tiempo=1 + tiempo_random.nextInt(15);
  
- if(mayor==true)
- {
-  Random prio_random=new Random();
-  prio=(ListaProcesosSRT.get(0).prioridad) + prio_random.nextInt(15); 
- }
- else
- {
   Random prio_random=new Random();
   prio=1 + prio_random.nextInt(15); 
- }
- 
-  contador++;
-  ListaProcesosSRT.add((new Proceso(contador,tiempo,prio)));
-  indiceSRT.add((new Referencia(contador,prio)));
+  
+  Random turno_random=new Random();
+  turno=1 + prio_random.nextInt(3); 
+  
+  
   
  
-  ListaProcesosSRT.get(contador-1).imprimeListo();    
-    
+  
+  if(contadorSRT==0 && contadorRR==0 && contadorFCFS==0)
+  {
+       contadorSRT++;
+        ListaProcesosSRT.add((new Proceso(contadorSRT,tiempo,prio+1,Ventana.SISTEMA)));
+        indiceSRT.add((new Referencia(contadorSRT,prio+1)));
+        ListaProcesosSRT.get(ListaProcesosSRT.size()-1).imprimeListo(); 
+        
+        contadorSRT++;
+        ListaProcesosSRT.add((new Proceso(contadorSRT,tiempo,prio,Ventana.SISTEMA)));
+        indiceSRT.add((new Referencia(contadorSRT,prio)));
+        ListaProcesosSRT.get(ListaProcesosSRT.size()-1).imprimeListo(); 
+        
+        
+        contadorRR++;
+        ListaProcesosRR.add((new Proceso(contadorRR,tiempo,prio,Ventana.USUARIO)));
+        ListaProcesosRR.get(ListaProcesosRR.size()-1).imprimeListo(); 
+         
+        contadorFCFS++;
+        ListaProcesosFCFS.add((new Proceso(contadorFCFS,tiempo,prio,Ventana.OTROS)));
+        ListaProcesosFCFS.get(ListaProcesosFCFS.size()-1).imprimeListo();  
+        
+  }
+  else
+  {
+        if(turno==Ventana.SISTEMA)
+       {
+           contadorSRT++;
+        ListaProcesosSRT.add((new Proceso(contadorSRT,tiempo,prio+1,Ventana.SISTEMA)));
+        indiceSRT.add((new Referencia(contadorSRT,prio+1)));
+
+        ListaProcesosSRT.get(ListaProcesosSRT.size()-1).imprimeListo();    
+        
+        contadorSRT++;
+        ListaProcesosSRT.add((new Proceso(contadorSRT,tiempo,prio,Ventana.SISTEMA)));
+        indiceSRT.add((new Referencia(contadorSRT,prio)));
+
+        ListaProcesosSRT.get(ListaProcesosSRT.size()-1).imprimeListo(); 
+       }
+       else if(turno==Ventana.USUARIO)
+              {
+                  contadorRR++;
+                 ListaProcesosRR.add((new Proceso(contadorRR,tiempo,prio,Ventana.USUARIO)));
+
+                 ListaProcesosRR.get(ListaProcesosRR.size()-1).imprimeListo();    
+              }
+             else if(turno==Ventana.OTROS)
+                     {
+                         contadorFCFS++;
+                      ListaProcesosFCFS.add((new Proceso(contadorFCFS,tiempo,prio,Ventana.OTROS)));
+
+
+                      ListaProcesosFCFS.get(ListaProcesosFCFS.size()-1).imprimeListo();    
+                     }
+  
+  
+  
+  
+  }
+  
+  
+  
+  
+  
+  
+  
 }
 
 //////////////////////////////////
@@ -236,9 +229,9 @@ int posFinal=posInicio+29;
 	 }
  
  if(posicion==1)
-	 texto.append("Proceso "+pos+"\t"+listo);
+	 textoSRT.append("Proceso "+pos+"\t"+listo);
  else
-	 texto.append("\n"+"Proceso "+pos+"\t"+listo);
+	 textoSRT.append("\n"+"Proceso "+pos+"\t"+listo);
 	  
 
  
@@ -267,7 +260,7 @@ vieja="Proceso "+pos+"\t"+"Listo";
 nueva="Proceso "+pos+"\t"+"En ejecucion";
 
 
-aux=texto.getText();
+aux=textoSRT.getText();
 aux2=aux.replaceFirst(vieja, nueva);
 
 if(aux.equals(aux2))
@@ -275,7 +268,7 @@ if(aux.equals(aux2))
 	 vieja="Proceso "+pos+"\t"+"Bloqueado";
 	 aux2=aux.replaceFirst(vieja, nueva);
 	}
-texto.setText(aux2);
+textoSRT.setText(aux2);
 
 
 }
@@ -294,7 +287,7 @@ vieja="Proceso "+pos+"\t"+"Listo";
 nueva="Proceso "+pos+"\t"+"En ejecucion";
 
 
-aux=texto.getText();
+aux=textoSRT.getText();
 aux2=aux.replaceFirst(vieja, nueva);
 
 if(aux.equals(aux2))
@@ -304,7 +297,7 @@ if(aux.equals(aux2))
 	 vieja="Proceso "+pos+"\t"+"Bloqueado";
 	 aux2=aux.replaceFirst(vieja, nueva);
 	}
-texto.setText(aux2);
+textoSRT.setText(aux2);
 
 
 ListaProcesosSRT.get(posicion-1).status=2;
@@ -379,9 +372,9 @@ if(posicion<=9)
 vieja="Proceso "+pos+"\t"+"En ejecucion";
 nueva="Proceso "+pos+"\t"+"Bloqueado";
 
-aux=texto.getText().replaceFirst(vieja, nueva);
+aux=textoSRT.getText().replaceFirst(vieja, nueva);
 
-texto.setText(aux);
+textoSRT.setText(aux);
 
 ListaProcesosSRT.get(posicion-1).status=3;
 ListaProcesosSRT.get(posicion-1).suspend();
@@ -411,7 +404,7 @@ if(posicion<=9)
 vieja="Proceso "+pos+"\t"+"En ejecucion";
 nueva="Proceso "+pos+"\t"+"Eliminado";
 
-aux=texto.getText();
+aux=textoSRT.getText();
 aux2=aux.replaceFirst(vieja, nueva);
 
 if(aux.equals(aux2))
@@ -421,7 +414,7 @@ if(aux.equals(aux2))
 	}
 
 
-texto.setText(aux2);
+textoSRT.setText(aux2);
 }
     
     
@@ -442,7 +435,7 @@ texto.setText(aux2);
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        texto = new javax.swing.JTextArea();
+        textoSRT = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtNumero = new javax.swing.JTextPane();
@@ -458,7 +451,7 @@ texto.setText(aux2);
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        texto1 = new javax.swing.JTextArea();
+        textoRR = new javax.swing.JTextArea();
         jPanel4 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
@@ -470,7 +463,7 @@ texto.setText(aux2);
         jLabel22 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        texto2 = new javax.swing.JTextArea();
+        textoFCFS = new javax.swing.JTextArea();
         jPanel11 = new javax.swing.JPanel();
         jLabel35 = new javax.swing.JLabel();
         jLabel36 = new javax.swing.JLabel();
@@ -488,9 +481,9 @@ texto.setText(aux2);
         jLabel2.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         jLabel2.setText("Estado");
 
-        texto.setColumns(20);
-        texto.setRows(5);
-        jScrollPane1.setViewportView(texto);
+        textoSRT.setColumns(20);
+        textoSRT.setRows(5);
+        jScrollPane1.setViewportView(textoSRT);
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -571,7 +564,7 @@ texto.setText(aux2);
                 .addComponent(pausar, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(finalizar, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 336, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(informacion))
         );
 
@@ -637,9 +630,9 @@ texto.setText(aux2);
                 .addContainerGap(53, Short.MAX_VALUE))
         );
 
-        texto1.setColumns(20);
-        texto1.setRows(5);
-        jScrollPane3.setViewportView(texto1);
+        textoRR.setColumns(20);
+        textoRR.setRows(5);
+        jScrollPane3.setViewportView(textoRR);
 
         jPanel4.setBackground(new java.awt.Color(51, 51, 51));
 
@@ -712,9 +705,9 @@ texto.setText(aux2);
         jLabel23.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         jLabel23.setText("Estado");
 
-        texto2.setColumns(20);
-        texto2.setRows(5);
-        jScrollPane4.setViewportView(texto2);
+        textoFCFS.setColumns(20);
+        textoFCFS.setRows(5);
+        jScrollPane4.setViewportView(textoFCFS);
 
         jPanel11.setBackground(new java.awt.Color(51, 51, 51));
 
@@ -757,7 +750,7 @@ texto.setText(aux2);
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addGap(40, 40, 40)
                 .addComponent(jLabel35)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -848,7 +841,7 @@ texto.setText(aux2);
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(42, Short.MAX_VALUE))
             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
@@ -856,17 +849,11 @@ texto.setText(aux2);
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(20, 20, 20))
+            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -928,71 +915,35 @@ texto.setText(aux2);
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel26;
-    private javax.swing.JLabel jLabel27;
-    private javax.swing.JLabel jLabel28;
-    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel30;
-    private javax.swing.JLabel jLabel31;
-    private javax.swing.JLabel jLabel32;
-    private javax.swing.JLabel jLabel33;
-    private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel40;
-    private javax.swing.JLabel jLabel41;
-    private javax.swing.JLabel jLabel42;
-    private javax.swing.JLabel jLabel43;
-    private javax.swing.JLabel jLabel44;
-    private javax.swing.JLabel jLabel45;
-    private javax.swing.JLabel jLabel46;
-    private javax.swing.JLabel jLabel47;
-    private javax.swing.JLabel jLabel48;
-    private javax.swing.JLabel jLabel49;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel50;
-    private javax.swing.JLabel jLabel51;
-    private javax.swing.JLabel jLabel52;
-    private javax.swing.JLabel jLabel53;
-    private javax.swing.JLabel jLabel54;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JButton pausar;
     private javax.swing.JButton reanudar;
-    public static javax.swing.JTextArea texto;
-    public static javax.swing.JTextArea texto1;
-    public static javax.swing.JTextArea texto2;
+    public static javax.swing.JTextArea textoFCFS;
+    public static javax.swing.JTextArea textoRR;
+    public static javax.swing.JTextArea textoSRT;
     private javax.swing.JTextPane txtNumero;
     // End of variables declaration//GEN-END:variables
     
@@ -1028,11 +979,29 @@ texto.setText(aux2);
  static Thread Creador;
  
  Thread auto;
+ Thread HiloSRT;
+ Thread HiloRR;
+Thread HiloFCFS;
  
- static int contador=0;
- static int contador_pos=0;
+ static int contadorSRT=0;
+static int contadorRR=0;
+static int contadorFCFS=0;
+ 
+ 
+ 
+ 
+ 
+
 
  public static boolean mayor=false;
  public static boolean entrar=true;
+ 
+ static final int SISTEMA= 1;
+ static final int USUARIO= 2;
+ static final int OTROS= 3;
+ 
+ static int rr=5;
+ static int contador_pos=0;
+ 
 
 }

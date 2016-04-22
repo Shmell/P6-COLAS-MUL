@@ -10,6 +10,13 @@ package p6.colas.mul;
 
 */
 
+/*
+ ORIGEN
+
+1 SISTEMA
+2 USUARIO
+3 OTROS
+*/
 
 
 public class Proceso extends Thread implements Comparable<Proceso>
@@ -18,12 +25,13 @@ public class Proceso extends Thread implements Comparable<Proceso>
  
  private int numero;
  int duracion;
- 
  int prioridad;
- 
  int status;
+ int origen;
+ 
+ int inicio=1;
 	
- public Proceso(int numero,int tiempo,int prioridad)
+ public Proceso(int numero,int tiempo,int prioridad,int origen)
  {
   this.numero=numero;
   duracion=tiempo;
@@ -32,8 +40,11 @@ public class Proceso extends Thread implements Comparable<Proceso>
 
    status=1;
   
+   this.origen=origen;
   
  }
+
+  
  
  ///////////////////////////////////////////////////////////////
  
@@ -58,7 +69,7 @@ public class Proceso extends Thread implements Comparable<Proceso>
 	 }
   catch (InterruptedException e)
 	 {
-	  e.printStackTrace();
+	            System.out.println("se interrumpio");;
 	 } 	
 	
   
@@ -77,40 +88,137 @@ public class Proceso extends Thread implements Comparable<Proceso>
  if(numero<=9)
  	  pos="0"+Integer.toString(numero);
 
+ switch(origen)
+  {
+      case Ventana.SISTEMA:
+                           vieja="Proceso "+pos+"\t"+"Listo y en espera"+"\t"+prioridad;
+                            nueva="Proceso "+pos+"\t"+"En ejecucion"+"\t"+dura+"\t"+prioridad;
+
+                            status=2;
+
+                            while(dura!=-1)
+                                   {
+                                   aux=Ventana.textoSRT.getText();
+                                   aux2=aux.replaceFirst(vieja, nueva);
+
+                                   Ventana.textoSRT.setText(aux2);
+
+
+                                    vieja=nueva;
+                                    dura--;
+                                    nueva="Proceso "+pos+"\t"+"En ejecucion"+"\t"+dura+"\t"+prioridad;
+                                    sleep(1000);
+
+                                    if(dura <= 2)
+                                            Ventana.mayor=true;
+                                   }
+
+                            if(dura==-1)
+                                   {
+                                    vieja="Proceso "+pos+"\t"+"En ejecucion"+"\t"+(dura+1)+"\t"+prioridad;
+                                    nueva="Proceso "+pos+"\t"+"      Finalizado"+"\t\t"+prioridad;
+
+                                    aux=Ventana.textoSRT.getText();
+                                    aux2=aux.replaceFirst(vieja, nueva);
+                                    Ventana.textoSRT.setText(aux2);
+
+                                    status=4;
+                                   }
+
+          ;break;    
+      case Ventana.USUARIO:
+                               vieja="Proceso "+pos+"\t"+"Listo y en espera";
+                        nueva="Proceso "+pos+"\t"+"En ejecucion"+"\t"+dura;
+
+                        status=2;
+
+                        while(dura!=-1)
+                               {
+                               aux=Ventana.textoRR.getText();
+                               aux2=aux.replaceFirst(vieja, nueva);
+
+                               Ventana.textoRR.setText(aux2);
+
+
+                                vieja=nueva;
+                                dura--;
+                                nueva="Proceso "+pos+"\t"+"En ejecucion"+"\t"+dura;
+                                sleep(1000);
+
+                                if(dura <= 2)
+                                        Ventana.mayor=true;
+                               }
+
+                        if(dura==-1)
+                               {
+                                vieja="Proceso "+pos+"\t"+"En ejecucion"+"\t"+(dura+1);
+                                nueva="Proceso "+pos+"\t"+"      Finalizado";
+
+                                aux=Ventana.textoFCFS.getText();
+                                aux2=aux.replaceFirst(vieja, nueva);
+                                Ventana.textoFCFS.setText(aux2);
+
+                                status=4;
+                               } 
+
+
+                               
  
-	  vieja="Proceso "+pos+"\t"+"Listo y en espera"+"\t"+prioridad;
-	  nueva="Proceso "+pos+"\t"+"En ejecucion"+"\t"+dura+"\t"+prioridad;
+                          
+
+          ;break; 
+      case Ventana.OTROS:
           
-          status=2;
-	 
-	  while(dura!=-1)
-		 {
-		 aux=Ventana.texto.getText();
-		 aux2=aux.replaceFirst(vieja, nueva);
-		 
-		 Ventana.texto.setText(aux2);
-		  
-		  
-		  vieja=nueva;
-		  dura--;
-		  nueva="Proceso "+pos+"\t"+"En ejecucion"+"\t"+dura+"\t"+prioridad;
-		  sleep(1000);
-		  
-		  if(dura <= 2)
-			  Ventana.mayor=true;
-		 }
-	 
-	  if(dura==-1)
-		 {
-		  vieja="Proceso "+pos+"\t"+"En ejecucion"+"\t"+(dura+1)+"\t"+prioridad;
-		  nueva="Proceso "+pos+"\t"+"      Finalizado"+"\t\t"+prioridad;
-		  
-		  aux=Ventana.texto.getText();
-		  aux2=aux.replaceFirst(vieja, nueva);
-		  Ventana.texto.setText(aux2);
-                  
-                  status=4;
-		 }
+                        vieja="Proceso "+pos+"\t"+"Listo y en espera";
+                        nueva="Proceso "+pos+"\t"+"En ejecucion"+"\t"+dura;
+
+                        status=2;
+
+                        while(dura!=-1)
+                               {
+                               aux=Ventana.textoFCFS.getText();
+                               aux2=aux.replaceFirst(vieja, nueva);
+
+                               Ventana.textoFCFS.setText(aux2);
+
+
+                                vieja=nueva;
+                                dura--;
+                                nueva="Proceso "+pos+"\t"+"En ejecucion"+"\t"+dura;
+                                sleep(1000);
+
+                                if(dura <= 2)
+                                        Ventana.mayor=true;
+                               }
+
+                        if(dura==-1)
+                               {
+                                vieja="Proceso "+pos+"\t"+"En ejecucion"+"\t"+(dura+1);
+                                nueva="Proceso "+pos+"\t"+"      Finalizado";
+
+                                aux=Ventana.textoFCFS.getText();
+                                aux2=aux.replaceFirst(vieja, nueva);
+                                Ventana.textoFCFS.setText(aux2);
+
+                                status=4;
+                               }
+                         
+
+          ;break; 
+  }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+	  
 	
 	 
 	 
@@ -133,14 +241,43 @@ public class Proceso extends Thread implements Comparable<Proceso>
  	  pos="0"+Integer.toString(numero);
  	 }
   
-  if(numero==1)
-	  Ventana.texto.append("Proceso "+pos+"\t"+status+"\t"+prioridad);
-  else
-	  Ventana.texto.append("\n"+"Proceso "+pos+"\t"+status+"\t"+prioridad);
+  switch(origen)
+  {
+      case Ventana.SISTEMA:
+                            if(Ventana.ListaProcesosSRT.size() == 1)
+                              Ventana.textoSRT.append("Proceso "+pos+"\t"+status+"\t"+prioridad);
+                            else
+                              Ventana.textoSRT.append("\n"+"Proceso "+pos+"\t"+status+"\t"+prioridad);
+
+          ;break;    
+      case Ventana.USUARIO:
+                           if(Ventana.ListaProcesosRR.size() == 1)
+                              Ventana.textoRR.append("Proceso "+pos+"\t"+status);
+                            else
+                              Ventana.textoRR.append("\n"+"Proceso "+pos+"\t"+status);
+
+          ;break; 
+      case Ventana.OTROS:
+                           if(Ventana.ListaProcesosFCFS.size() == 1)
+                              Ventana.textoFCFS.append("Proceso "+pos+"\t"+status);
+                            else
+                              Ventana.textoFCFS.append("\n"+"Proceso "+pos+"\t"+status);
+
+          ;break; 
+  }
+  
+  
+  
+  
+  
+  
  	  
  }
 
 
+ 
+ 
+ 
 
 public int compareTo(Proceso o) {
 int a=this.prioridad;

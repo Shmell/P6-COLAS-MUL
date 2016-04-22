@@ -1,5 +1,8 @@
 package p6.colas.mul;
 
+import static p6.colas.mul.Ventana.ListaProcesosSRT;
+import static p6.colas.mul.Ventana.contadorSRT;
+
 
 
 public class Automatico extends Thread
@@ -18,12 +21,12 @@ public class Automatico extends Thread
             {
                 if(Ventana.entrar==true)
 		{
-			if(Ventana.contador==0)
+			if(Ventana.contadorSRT==0 && Ventana.contadorRR==0 && Ventana.contadorFCFS==0)
 	  	   	 {   
                           Ventana.entrar=false;
                           
-                          
-                          Ventana.crea();
+                         
+                    
                           Ventana.crea();
                           
                           Ventana.entrar=true; 
@@ -74,5 +77,7 @@ public class Automatico extends Thread
 		
 		
 	}
+        
+
 
 }
