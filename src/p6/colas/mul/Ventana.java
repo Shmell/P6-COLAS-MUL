@@ -39,6 +39,16 @@ public class Ventana extends javax.swing.JFrame implements Runnable{
         initComponents();
         setLocation(400, 0) ;
         setTitle("SRT Prioridades");
+        
+        
+        jLabel6.setText(Integer.toString(PRIORIDAD_SRT));
+        jLabel8.setText(Integer.toString(TIEMPO_SRT));
+        jLabel11.setText(Integer.toString(PRIORIDAD_RR));
+        jLabel13.setText(Integer.toString(TIEMPO_RR));
+        jLabel37.setText(Integer.toString(PRIORIDAD_FCFS));
+        jLabel39.setText(Integer.toString(TIEMPO_FCFS));
+        
+        
 
           Creador=new Thread(this);
   
@@ -46,7 +56,7 @@ public class Ventana extends javax.swing.JFrame implements Runnable{
           auto.start();
           
           HiloSRT=new SRT();
-          HiloRR=new RR();
+          HiloRR=new RR(TIEMPO_RR_INTERNO);
           HiloFCFS=new FCFS();
           
           
@@ -61,10 +71,104 @@ public class Ventana extends javax.swing.JFrame implements Runnable{
 
 public void run()
 {
- //.start();
+    int bandera=0;
  
- HiloRR.start();
  
+ 
+ while(true)
+{
+    if(bandera==1)
+    {
+        System.out.println("entro segunda vuelta)");
+       SRT.reanudar();LabelSistema.setForeground(Color.red);
+
+      
+       try {
+                   sleep(TIEMPO_SRT*1000);
+               } catch (InterruptedException ex) {
+                   Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+               }
+       
+       
+       SRT.suspender();LabelSistema.setForeground(Color.white);
+       RR.reanudar();LabelUsuario.setForeground(Color.red);
+
+        //RR.reanudar();
+      
+       try {
+                   sleep(TIEMPO_RR*1000);
+               } catch (InterruptedException ex) {
+                   Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+               }
+       
+        RR.suspender();LabelUsuario.setForeground(Color.white);
+         FCFS.reanudar();LabelVarios.setForeground(Color.red);
+
+      
+       try {
+                   sleep(TIEMPO_FCFS*1000);
+               } catch (InterruptedException ex) {
+                   Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+               }
+      
+        FCFS.suspender(); LabelVarios.setForeground(Color.white);
+        
+        
+        
+        
+        
+        
+        
+    }
+    else
+    {
+        HiloSRT.start(); LabelSistema.setForeground(Color.red);
+        
+
+      
+       try {
+                   sleep(TIEMPO_SRT*1000);
+               } catch (InterruptedException ex) {
+                   Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+               }
+       
+       
+       SRT.suspender();LabelSistema.setForeground(Color.white);
+       HiloRR.start();LabelUsuario.setForeground(Color.red);
+      
+       try {
+                   sleep(TIEMPO_RR*1000);
+               } catch (InterruptedException ex) {
+                   Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+               }
+       
+       RR.suspender();LabelUsuario.setForeground(Color.white);
+       
+         HiloFCFS.start();LabelVarios.setForeground(Color.red);
+
+      
+       try {
+                   sleep(TIEMPO_FCFS*1000);
+               } catch (InterruptedException ex) {
+                   Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+               }
+      
+        FCFS.suspender();LabelVarios.setForeground(Color.white);
+        
+        bandera=1;
+        
+    }
+    
+    
+    
+       
+        
+             
+             
+}
+        
+         
+     
  
 
  
@@ -123,6 +227,9 @@ public synchronized static void crea()
         ListaProcesosSRT.get(ListaProcesosSRT.size()-1).imprimeListo(); 
         
         
+        contadorRR++;
+        ListaProcesosRR.add((new Proceso(contadorRR,tiempo,prio,Ventana.USUARIO)));
+        ListaProcesosRR.get(ListaProcesosRR.size()-1).imprimeListo(); 
         contadorRR++;
         ListaProcesosRR.add((new Proceso(contadorRR,tiempo,prio,Ventana.USUARIO)));
         ListaProcesosRR.get(ListaProcesosRR.size()-1).imprimeListo(); 
@@ -445,7 +552,7 @@ textoSRT.setText(aux2);
         finalizar = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
+        LabelSistema = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
@@ -453,7 +560,7 @@ textoSRT.setText(aux2);
         jScrollPane3 = new javax.swing.JScrollPane();
         textoRR = new javax.swing.JTextArea();
         jPanel4 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
+        LabelUsuario = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
@@ -465,7 +572,7 @@ textoSRT.setText(aux2);
         jScrollPane4 = new javax.swing.JScrollPane();
         textoFCFS = new javax.swing.JTextArea();
         jPanel11 = new javax.swing.JPanel();
-        jLabel35 = new javax.swing.JLabel();
+        LabelVarios = new javax.swing.JLabel();
         jLabel36 = new javax.swing.JLabel();
         jLabel37 = new javax.swing.JLabel();
         jLabel38 = new javax.swing.JLabel();
@@ -573,9 +680,9 @@ textoSRT.setText(aux2);
 
         jPanel3.setBackground(new java.awt.Color(51, 51, 51));
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("Sistema (SRT)");
+        LabelSistema.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        LabelSistema.setForeground(new java.awt.Color(255, 255, 255));
+        LabelSistema.setText("Sistema (SRT)");
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
@@ -601,24 +708,22 @@ textoSRT.setText(aux2);
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel7)))
+                    .addComponent(jLabel7))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8)
                     .addComponent(jLabel6))
-                .addGap(50, 50, 50))
+                .addGap(87, 87, 87))
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(jLabel4)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(LabelSistema)
+                .addContainerGap(54, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
-                .addComponent(jLabel4)
+                .addComponent(LabelSistema)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -636,9 +741,9 @@ textoSRT.setText(aux2);
 
         jPanel4.setBackground(new java.awt.Color(51, 51, 51));
 
-        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("Usuario (RR)");
+        LabelUsuario.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        LabelUsuario.setForeground(new java.awt.Color(255, 255, 255));
+        LabelUsuario.setText("Usuario (RR)");
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
@@ -664,24 +769,22 @@ textoSRT.setText(aux2);
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel12)))
+                    .addComponent(jLabel12))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel13)
                     .addComponent(jLabel11))
-                .addGap(50, 50, 50))
+                .addGap(87, 87, 87))
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
-                .addComponent(jLabel9)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(LabelUsuario)
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
-                .addComponent(jLabel9)
+                .addComponent(LabelUsuario)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
@@ -711,9 +814,9 @@ textoSRT.setText(aux2);
 
         jPanel11.setBackground(new java.awt.Color(51, 51, 51));
 
-        jLabel35.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel35.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel35.setText("Varios (FCFS)");
+        LabelVarios.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        LabelVarios.setForeground(new java.awt.Color(255, 255, 255));
+        LabelVarios.setText("Varios (FCFS)");
 
         jLabel36.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel36.setForeground(new java.awt.Color(255, 255, 255));
@@ -739,24 +842,22 @@ textoSRT.setText(aux2);
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel36)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel38)))
+                    .addComponent(jLabel38))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel39)
                     .addComponent(jLabel37))
-                .addGap(50, 50, 50))
+                .addGap(87, 87, 87))
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addGap(40, 40, 40)
-                .addComponent(jLabel35)
+                .addComponent(LabelVarios)
                 .addContainerGap(47, Short.MAX_VALUE))
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addGap(32, 32, 32)
-                .addComponent(jLabel35)
+                .addComponent(LabelVarios)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel36)
@@ -906,6 +1007,9 @@ textoSRT.setText(aux2);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel LabelSistema;
+    private javax.swing.JLabel LabelUsuario;
+    private javax.swing.JLabel LabelVarios;
     private javax.swing.JButton finalizar;
     private javax.swing.JButton informacion;
     private javax.swing.JLabel jLabel1;
@@ -919,17 +1023,14 @@ textoSRT.setText(aux2);
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel39;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
@@ -957,17 +1058,16 @@ textoSRT.setText(aux2);
  static ArrayList<Proceso> ListaProcesosRR=new ArrayList<Proceso>(); 
  
  final int PRIORIDAD_SRT=1;
- final int TIEMPO_SRT=1;
+ final int TIEMPO_SRT=6;
+ 
+ final int PRIORIDAD_RR=2;
+ final int TIEMPO_RR=4;
+ final int TIEMPO_RR_INTERNO=2;
  
  
- final int PRIORIDAD_FCFS=2;
- final int TIEMPO_FCFS=1;
- 
- 
- final int PRIORIDAD_RR=3;
- final int TIEMPO_RR=1;
- 
- 
+  final int PRIORIDAD_FCFS=3;
+ final int TIEMPO_FCFS=2;
+
  
  
  

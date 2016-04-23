@@ -30,9 +30,21 @@ public class SRT extends Thread
                     
                     if(aux_status==1)
                     {
-                        Ventana.ListaProcesosSRT.get(Ventana.indiceSRT.get(i).numProceso-1).start();
-                        i=Ventana.indiceSRT.size();
+                        
+                        
+                           Ventana.ListaProcesosSRT.get(Ventana.indiceSRT.get(i).numProceso-1).start();
+                        try {
+                            Ventana.ListaProcesosSRT.get(Ventana.indiceSRT.get(i).numProceso-1).join();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(SRT.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                           
+                        i=Ventana.indiceSRT.size();  
+                        
+                       
                     }
+                    
+                    
               //  }
                 
                 //Ventana.entrar=true;
@@ -40,7 +52,7 @@ public class SRT extends Thread
                 
                 
             }
-              try
+              /*try
                 {
                 sleep(5000);
                 }
@@ -48,18 +60,32 @@ public class SRT extends Thread
                 {
                 System.out.println("pr9oblemilla");
                 }  
-                
+               */ 
                 
          }
           
-     
-     
-     
-     
-     
-     
-
  }
+ static public void suspender()
+    {
+        
+        for(int i=0;i<Ventana.ListaProcesosSRT.size();i++)
+            {
+                Ventana.ListaProcesosSRT.get(i).suspend();
+            }
+    }
+    
+    static public void reanudar()
+    {
+        
+        for(int i=0;i<Ventana.ListaProcesosSRT.size();i++)
+            {
+                Ventana.ListaProcesosSRT.get(i).resume();
+            }
+    }
+ 
+ 
+   
+  
 }
 
 

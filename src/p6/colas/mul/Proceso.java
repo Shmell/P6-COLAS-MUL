@@ -154,9 +154,9 @@ public class Proceso extends Thread implements Comparable<Proceso>
                                 vieja="Proceso "+pos+"\t"+"En ejecucion"+"\t"+(dura+1);
                                 nueva="Proceso "+pos+"\t"+"      Finalizado";
 
-                                aux=Ventana.textoFCFS.getText();
+                                aux=Ventana.textoRR.getText();
                                 aux2=aux.replaceFirst(vieja, nueva);
-                                Ventana.textoFCFS.setText(aux2);
+                                Ventana.textoRR.setText(aux2);
 
                                 status=4;
                                } 
