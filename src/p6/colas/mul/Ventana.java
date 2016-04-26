@@ -231,7 +231,7 @@ public synchronized static void crea()
         ListaProcesosRR.add((new Proceso(contadorRR,tiempo,prio,Ventana.USUARIO)));
         ListaProcesosRR.get(ListaProcesosRR.size()-1).imprimeListo(); 
         contadorRR++;
-        ListaProcesosRR.add((new Proceso(contadorRR,tiempo,prio,Ventana.USUARIO)));
+        ListaProcesosRR.add((new Proceso(contadorRR,tiempo,prio,Ventana.USUARIO,ListaProcesosRR.get(ListaProcesosRR.size()-1))));
         ListaProcesosRR.get(ListaProcesosRR.size()-1).imprimeListo(); 
          
         contadorFCFS++;
@@ -258,7 +258,7 @@ public synchronized static void crea()
        else if(turno==Ventana.USUARIO)
               {
                   contadorRR++;
-                 ListaProcesosRR.add((new Proceso(contadorRR,tiempo,prio,Ventana.USUARIO)));
+                 ListaProcesosRR.add((new Proceso(contadorRR,tiempo,prio,Ventana.USUARIO,ListaProcesosRR.get(ListaProcesosRR.size()-1))));
 
                  ListaProcesosRR.get(ListaProcesosRR.size()-1).imprimeListo();    
               }

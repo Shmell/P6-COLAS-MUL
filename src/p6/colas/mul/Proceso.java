@@ -1,5 +1,8 @@
 package p6.colas.mul;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /*
  STATUS
 
@@ -41,7 +44,25 @@ public class Proceso extends Thread implements Comparable<Proceso>
    status=1;
   
    this.origen=origen;
+ }
+ 
+ 
+  public Proceso(int numero,int tiempo,int prioridad,int origen,Proceso anterior)
+ {
+  this.numero=numero;
+  duracion=tiempo;
+  this.prioridad=prioridad;
+  //Thread hilo=new Thread(this);
+
+   status=1;
   
+   this.origen=origen;
+   
+     try {
+         anterior.join();
+     } catch (InterruptedException ex) {
+         Logger.getLogger(Proceso.class.getName()).log(Level.SEVERE, null, ex);
+     }
  }
 
   
